@@ -39,18 +39,18 @@ graph TD
     VSCE["🔌 VS Code Extension Frontend"]
     Server["⚙️ Express API Backend Service"]
     
-    subgraph Rule Engine (Source of Truth)
+    subgraph RuleEngine ["Rule Engine (Source of Truth)"]
         StaticAudit["🔍 Static Rule Auditor"]
         DnaService["🧬 Design DNA Analyzer"]
         DriftService["📉 Drift Calculator"]
     end
 
-    subgraph AI Reasoning (Cognitive Brain)
+    subgraph AIReasoning ["AI Reasoning (Cognitive Brain)"]
         Gemini["🧠 Google Gemini (gemini-2.5-flash)"]
         Coach["💡 Design Coach Mode"]
     end
 
-    subgraph Knowledge Base Layer
+    subgraph KBLayer ["Knowledge Base Layer"]
         KB["📂 Local Markdown Guidelines (skills/*.md)"]
         Foundry["⚡ Microsoft Foundry IQ Retrieval Layer"]
     end
