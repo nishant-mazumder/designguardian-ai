@@ -74,7 +74,7 @@ export class DesignGuardianPanel {
                 switch (message.command) {
                     case 'webviewReady':
                         console.log(`[Extension] Received webviewReady message from webview`);
-                        if (this.ensureActiveContext()) {
+                        if (await this.ensureActiveContext()) {
                             console.log(`[Extension] Active context verified, triggering audit...`);
                             await this.triggerAudit(this._currentCode, this._currentFileName);
                         } else {
@@ -349,12 +349,32 @@ export class DesignGuardianPanel {
         }
     }
 
-    private ensureActiveContext(): boolean {
+    private async ensureActiveContext(): Promise<boolean> {
         if (!this._currentCode || !this._currentFileName) {
             const editor = vscode.window.activeTextEditor || this._lastActiveEditor;
             if (editor) {
                 this._currentCode = editor.document.getText();
                 this._currentFileName = editor.document.fileName;
+            } else {
+                console.log('[Extension] No active editor found, searching workspace for Card.tsx...');
+                // Fallback: search workspace for Card.tsx
+                const files = await vscode.workspace.findFiles('**/Card.tsx');
+                if (files.length > 0) {
+                    console.log(`[Extension] Found Card.tsx in workspace: ${files[0].fsPath}`);
+                    const doc = await vscode.workspace.openTextDocument(files[0]);
+                    this._currentCode = doc.getText();
+                    this._currentFileName = doc.fileName;
+                } else {
+                    console.log('[Extension] Card.tsx not found, searching for any .tsx file...');
+                    // Second Fallback: search for any .tsx file
+                    const anyTsx = await vscode.workspace.findFiles('**/*.tsx', '**/node_modules/**');
+                    if (anyTsx.length > 0) {
+                        console.log(`[Extension] Found fallback file: ${anyTsx[0].fsPath}`);
+                        const doc = await vscode.workspace.openTextDocument(anyTsx[0]);
+                        this._currentCode = doc.getText();
+                        this._currentFileName = doc.fileName;
+                    }
+                }
             }
         }
         return !!(this._currentCode && this._currentFileName);
@@ -362,7 +382,7 @@ export class DesignGuardianPanel {
 
     // Actions received from webview UI interaction
     private async runAudit() {
-        if (!this.ensureActiveContext()) {
+        if (!await this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to audit.');
             return;
         }
@@ -370,7 +390,7 @@ export class DesignGuardianPanel {
     }
 
     private async runFix(violations?: string[]) {
-        if (!this.ensureActiveContext()) {
+        if (!await this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to fix.');
             return;
         }
@@ -397,7 +417,7 @@ export class DesignGuardianPanel {
     }
 
     private async runDNA() {
-        if (!this.ensureActiveContext()) {
+        if (!await this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to analyze.');
             return;
         }
@@ -405,7 +425,7 @@ export class DesignGuardianPanel {
     }
 
     private async runDrift() {
-        if (!this.ensureActiveContext()) {
+        if (!await this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to analyze.');
             return;
         }
@@ -439,7 +459,7 @@ export class DesignGuardianPanel {
     }
 
     private async runCoach() {
-        if (!this.ensureActiveContext()) {
+        if (!await this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to consult.');
             return;
         }
