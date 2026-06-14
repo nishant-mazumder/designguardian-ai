@@ -24,19 +24,15 @@ export class DesignGuardianPanel {
     private _currentFileName: string = '';
 
     public static createOrShow(extensionUri: vscode.Uri) {
-        const column = vscode.window.activeTextEditor
-            ? vscode.window.activeTextEditor.viewColumn
-            : undefined;
-
         if (DesignGuardianPanel.currentPanel) {
-            DesignGuardianPanel.currentPanel._panel.reveal(column || vscode.ViewColumn.One);
+            DesignGuardianPanel.currentPanel._panel.reveal(vscode.ViewColumn.Beside);
             return DesignGuardianPanel.currentPanel;
         }
 
         const panel = vscode.window.createWebviewPanel(
             'designGuardian',
             'DesignGuardian Dashboard',
-            column || vscode.ViewColumn.One,
+            vscode.ViewColumn.Beside,
             {
                 enableScripts: true,
                 retainContextWhenHidden: true,
