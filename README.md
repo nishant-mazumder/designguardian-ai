@@ -184,32 +184,32 @@ GitHub Copilot was utilized as our primary pair programmer throughout the develo
 
 ```
 c:\Users\acer\OneDrive\Desktop\Microsoft Hackathon/
-├── shared/                  # Common TypeScript interfaces & schemas
-│   └── src/types.ts         # Violation, DNA, and Drift schemas
-├── skills/                  # Microsoft Foundry IQ Knowledge Base markdown files
-│   ├── spacing.md           # 30 modular spacing & layout rules
-│   ├── typography.md        # 30 typography & font scaling rules
-│   ├── color-system.md      # 30 color system & palette rules
-│   ├── accessibility.md     # 30 WCAG accessibility guidelines
-│   ├── premium-branding.md  # 30 visual curves & transition physics rules
-│   └── design-dna.md        # 30 design DNA profile guidelines
-├── server/                  # Express API Server workspace
-│   ├── src/services/        # Business logic engines
-│   │   ├── ai.service.ts    # Gemini & OpenAI client connectors
-│   │   ├── audit.service.ts # Hybrid rule-AI auditing service
-│   │   ├── dna.service.ts   # Design DNA profile extraction
-│   │   ├── drift.service.ts # Visual system drift calculator
-│   │   ├── refactor.service.ts # AI automated refactoring engine
-│   │   └── providers/       # Local and Microsoft Foundry providers
-│   ├── src/app.ts           # Express endpoints & markdown parser
-│   └── src/index.ts         # Server entrypoint
-├── extension/               # VS Code Extension workspace
-│   ├── src/extension.ts     # Extension activation, commands registry
-│   ├── src/apiClient.ts     # REST client calling server endpoints
-│   └── src/DesignGuardianPanel.ts # Webview panel renderer & HTML UI
-└── demo/                    # Sample components with design violations
-    ├── Button.tsx           # Tailwind React button violating spacing/borders
-    └── Card.tsx             # JSX card violating color palette and access tags
+├── shared/
+│   └── src/types.ts
+├── skills/
+│   ├── spacing.md
+│   ├── typography.md
+│   ├── color-system.md
+│   ├── accessibility.md
+│   ├── premium-branding.md
+│   └── design-dna.md
+├── server/
+│   ├── src/services/
+│   │   ├── ai.service.ts
+│   │   ├── audit.service.ts
+│   │   ├── dna.service.ts
+│   │   ├── drift.service.ts
+│   │   ├── refactor.service.ts
+│   │   └── providers/
+│   ├── src/app.ts
+│   └── src/index.ts
+├── extension/
+│   ├── src/extension.ts
+│   ├── src/apiClient.ts
+│   └── src/DesignGuardianPanel.ts
+└── demo/
+    ├── Button.tsx
+    └── Card.tsx
 ```
 
 ---
