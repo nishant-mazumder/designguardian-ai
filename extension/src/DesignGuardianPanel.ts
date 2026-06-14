@@ -857,9 +857,6 @@ export class DesignGuardianPanel {
     <script>
         const vscode = acquireVsCodeApi();
         
-        // Notify the extension that the webview is ready to receive messages
-        vscode.postMessage({ command: 'webviewReady' });
-        
         let currentTab = 'dashboard';
         let latestAuditData = null;
         let latestFixData = null;
@@ -1390,6 +1387,9 @@ export class DesignGuardianPanel {
                 svg.classList.remove('rotate-180');
             }
         }
+
+        // Notify the extension that the webview is ready to receive messages (listeners are registered!)
+        vscode.postMessage({ command: 'webviewReady' });
     </script>
 </body>
 </html>
