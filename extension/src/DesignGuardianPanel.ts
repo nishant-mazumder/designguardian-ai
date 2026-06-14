@@ -24,15 +24,19 @@ export class DesignGuardianPanel {
     private _currentFileName: string = '';
 
     public static createOrShow(extensionUri: vscode.Uri) {
+        const column = vscode.window.activeTextEditor
+            ? vscode.window.activeTextEditor.viewColumn
+            : undefined;
+
         if (DesignGuardianPanel.currentPanel) {
-            DesignGuardianPanel.currentPanel._panel.reveal(vscode.ViewColumn.Beside);
+            DesignGuardianPanel.currentPanel._panel.reveal(column || vscode.ViewColumn.One);
             return DesignGuardianPanel.currentPanel;
         }
 
         const panel = vscode.window.createWebviewPanel(
             'designGuardian',
             'DesignGuardian Dashboard',
-            vscode.ViewColumn.Beside,
+            column || vscode.ViewColumn.One,
             {
                 enableScripts: true,
                 retainContextWhenHidden: true,
@@ -59,6 +63,11 @@ export class DesignGuardianPanel {
         this._panel.webview.onDidReceiveMessage(
             async (message) => {
                 switch (message.command) {
+                    case 'webviewReady':
+                        if (this._currentCode && this._currentFileName) {
+                            await this.triggerAudit(this._currentCode, this._currentFileName);
+                        }
+                        break;
                     case 'runAudit':
                         await this.runAudit();
                         break;
@@ -817,6 +826,9 @@ export class DesignGuardianPanel {
     <!-- JS Logic -->
     <script>
         const vscode = acquireVsCodeApi();
+        
+        // Notify the extension that the webview is ready to receive messages
+        vscode.postMessage({ command: 'webviewReady' });
         
         let currentTab = 'dashboard';
         let latestAuditData = null;
