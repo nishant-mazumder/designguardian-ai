@@ -109,6 +109,7 @@ export class DesignGuardianPanel {
                         vscode.window.showInformationMessage(message.text);
                         break;
                     case 'selectFile':
+                        console.log(`[Extension] Received selectFile command from webview`);
                         await this.handleManualFileSelection();
                         break;
                 }
@@ -384,16 +385,26 @@ export class DesignGuardianPanel {
     }
 
     private async handleManualFileSelection() {
-        const fileUris = await vscode.window.showOpenDialog({
-            canSelectMany: false,
-            openLabel: 'Select Component File',
-            filters: { 'TypeScript/JavaScript React': ['tsx', 'jsx', 'ts', 'js'] }
-        });
-        if (fileUris && fileUris.length > 0) {
-            const doc = await vscode.workspace.openTextDocument(fileUris[0]);
-            this._currentCode = doc.getText();
-            this._currentFileName = doc.fileName;
-            await this.triggerAudit(this._currentCode, this._currentFileName);
+        console.log(`[Extension] handleManualFileSelection invoked. Showing file dialog...`);
+        try {
+            const fileUris = await vscode.window.showOpenDialog({
+                canSelectMany: false,
+                openLabel: 'Select Component File',
+                filters: { 'TypeScript/JavaScript React': ['tsx', 'jsx', 'ts', 'js'] }
+            });
+            console.log(`[Extension] File dialog returned URIs:`, fileUris);
+            if (fileUris && fileUris.length > 0) {
+                console.log(`[Extension] Selected file: ${fileUris[0].fsPath}`);
+                const doc = await vscode.workspace.openTextDocument(fileUris[0]);
+                this._currentCode = doc.getText();
+                this._currentFileName = doc.fileName;
+                await this.triggerAudit(this._currentCode, this._currentFileName);
+            } else {
+                console.log(`[Extension] File selection cancelled by user.`);
+            }
+        } catch (error: any) {
+            console.error(`[Extension] Error in handleManualFileSelection:`, error);
+            vscode.window.showErrorMessage(`Failed to select file manually: ${error.message}`);
         }
     }
 
