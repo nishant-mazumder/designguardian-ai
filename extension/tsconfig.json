@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "node16",
     "target": "es2020",
     "outDir": "out",
     "lib": [
@@ -11,7 +11,7 @@
     "strict": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node10",
+    "moduleResolution": "node16",
     "esModuleInterop": true
   },
   "exclude": [
