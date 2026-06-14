@@ -12,7 +12,8 @@
     "build:server": "npm run build --workspace=server",
     "build": "npm run build --workspaces --if-present",
     "start:server": "npm run start --workspace=server",
-    "dev:server": "npm run dev --workspace=server"
+    "dev:server": "npm run dev --workspace=server",
+    "start:mcp": "npm run start:mcp --workspace=server"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",
