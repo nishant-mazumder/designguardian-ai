@@ -108,6 +108,9 @@ export class DesignGuardianPanel {
                     case 'showInfoMessage':
                         vscode.window.showInformationMessage(message.text);
                         break;
+                    case 'selectFile':
+                        await this.handleManualFileSelection();
+                        break;
                 }
             },
             null,
@@ -380,6 +383,20 @@ export class DesignGuardianPanel {
         return !!(this._currentCode && this._currentFileName);
     }
 
+    private async handleManualFileSelection() {
+        const fileUris = await vscode.window.showOpenDialog({
+            canSelectMany: false,
+            openLabel: 'Select Component File',
+            filters: { 'TypeScript/JavaScript React': ['tsx', 'jsx', 'ts', 'js'] }
+        });
+        if (fileUris && fileUris.length > 0) {
+            const doc = await vscode.workspace.openTextDocument(fileUris[0]);
+            this._currentCode = doc.getText();
+            this._currentFileName = doc.fileName;
+            await this.triggerAudit(this._currentCode, this._currentFileName);
+        }
+    }
+
     // Actions received from webview UI interaction
     private async runAudit() {
         if (!await this.ensureActiveContext()) {
@@ -565,6 +582,12 @@ export class DesignGuardianPanel {
         </div>
 
         <div class="flex space-x-2">
+            <button onclick="triggerSelectFile()" class="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-800 border border-zinc-700 text-xs font-semibold flex items-center space-x-1.5 transition duration-200">
+                <svg class="w-4 h-4 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V4a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                </svg>
+                <span>Select File</span>
+            </button>
             <button onclick="triggerRunAudit()" class="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-800 border border-zinc-700 text-xs font-semibold flex items-center space-x-1.5 transition duration-200">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.306 7H18" />
@@ -759,16 +782,22 @@ export class DesignGuardianPanel {
                     </div>
 
                     <!-- Empty State -->
-                    <div id="empty-violations" class="py-12 text-center text-zinc-500 flex flex-col items-center justify-center space-y-3">
-                        <div class="w-12 h-12 rounded-full bg-emerald-950/20 border border-emerald-900/30 flex items-center justify-center text-emerald-400 shadow-md">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    <div id="empty-violations" class="py-12 text-center text-zinc-500 flex flex-col items-center justify-center space-y-4">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-600/10 border border-brand-500/20 flex items-center justify-center text-brand-400 shadow-lg shadow-brand-500/5 animate-pulse">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m-9 1V4a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                             </svg>
                         </div>
-                        <div class="space-y-1">
-                            <p class="text-sm font-semibold text-zinc-300">Perfect Compliance!</p>
-                            <p class="text-xs text-zinc-500">Component conforms beautifully to design system requirements.</p>
+                        <div class="space-y-1.5 max-w-sm">
+                            <p id="empty-violations-title" class="text-sm font-semibold text-zinc-200">No Component Audited</p>
+                            <p id="empty-violations-desc" class="text-xs text-zinc-400">Please select a React/TypeScript component file to start auditing compliance and design drift.</p>
                         </div>
+                        <button onclick="triggerSelectFile()" class="mt-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center space-x-1.5 shadow-md shadow-brand-600/20 transition duration-200">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>Select File Manually</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1042,6 +1071,20 @@ export class DesignGuardianPanel {
                 document.getElementById('violations-count-badge').className = "px-2 py-0.5 rounded-md bg-rose-950/40 border border-rose-900/30 text-xs font-mono font-bold text-rose-300";
             } else {
                 document.getElementById('empty-violations').classList.remove('hidden');
+                
+                // Update empty state text for perfect compliance
+                document.getElementById('empty-violations-title').innerText = "Perfect Compliance!";
+                document.getElementById('empty-violations-desc').innerText = "Component conforms beautifully to design system requirements.";
+                const selectBtn = document.querySelector('#empty-violations button');
+                if (selectBtn) {
+                    selectBtn.innerHTML = \`
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Select Another File</span>
+                    \`;
+                }
+
                 toggleSection('sec-critical', false);
                 toggleSection('sec-warning', false);
                 toggleSection('sec-info', false);
@@ -1352,6 +1395,10 @@ export class DesignGuardianPanel {
         }
 
         // Message post actions back to VS Code Ext Host
+        function triggerSelectFile() {
+            vscode.postMessage({ command: 'selectFile' });
+        }
+
         function triggerRunAudit() {
             vscode.postMessage({ command: 'runAudit' });
         }
