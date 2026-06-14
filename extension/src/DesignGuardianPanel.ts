@@ -73,8 +73,12 @@ export class DesignGuardianPanel {
             async (message) => {
                 switch (message.command) {
                     case 'webviewReady':
+                        console.log(`[Extension] Received webviewReady message from webview`);
                         if (this.ensureActiveContext()) {
+                            console.log(`[Extension] Active context verified, triggering audit...`);
                             await this.triggerAudit(this._currentCode, this._currentFileName);
+                        } else {
+                            console.log(`[Extension] Active context check failed on webviewReady`);
                         }
                         break;
                     case 'runAudit':
@@ -207,9 +211,11 @@ export class DesignGuardianPanel {
 
     // API triggers from VS Code Commands
     public async triggerAudit(code: string, fileName: string) {
+        console.log(`[Extension] triggerAudit invoked for: ${fileName}`);
         this._currentCode = code;
         this._currentFileName = fileName;
         
+        console.log(`[Extension] Posting setLoading command to webview...`);
         this._panel.webview.postMessage({ 
             command: 'setLoading', 
             status: 'Auditing component style guidelines...', 
@@ -218,14 +224,18 @@ export class DesignGuardianPanel {
         });
 
         try {
+            console.log(`[Extension] Initiating API post to auditComponent...`);
             const data = await auditComponent(code, fileName);
+            console.log(`[Extension] API returned response cleanly. Score: ${data.score}, Violations: ${data.violations.length}`);
             this._panel.webview.postMessage({
                 command: 'showAuditResults',
                 data: data,
                 fileName: path.basename(fileName),
                 originalCode: code
             });
+            console.log(`[Extension] showAuditResults message posted to webview successfully.`);
         } catch (error: any) {
+            console.error(`[Extension] Error caught in triggerAudit API call: ${error.message}`);
             this._panel.webview.postMessage({
                 command: 'showError',
                 error: error.message
