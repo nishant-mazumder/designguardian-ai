@@ -1,12 +1,23 @@
-# DesignGuardian AI
+<div align="center">
 
-### *Eliminate Generic AI UI Before It Ships.*
+# 🛡️ DesignGuardian AI
+
+### *The AI-Powered Design Governance Platform That Eliminates Generic UI Before It Ships.*
 
 [![Track: Creative Apps](https://img.shields.io/badge/Track-Creative%20Apps-blueviolet?style=for-the-badge)](https://github.com/microsoft)
-[![IQ Layer: Microsoft Foundry IQ](https://img.shields.io/badge/Required%20IQ%20Layer-Microsoft%20Foundry%20IQ-blue?style=for-the-badge)](https://azure.microsoft.com)
-[![Category: AI-Assisted Development](https://img.shields.io/badge/Category-AI--Assisted%20Development%20Tool-emerald?style=for-the-badge)](https://visualstudio.microsoft.com)
+[![IQ Layer: Microsoft Foundry IQ](https://img.shields.io/badge/IQ%20Layer-Microsoft%20Foundry%20IQ-blue?style=for-the-badge)](https://azure.microsoft.com)
+[![Category: AI-Assisted Development](https://img.shields.io/badge/Category-AI--Assisted%20Development-emerald?style=for-the-badge)](https://visualstudio.microsoft.com)
+[![MCP: GitHub Copilot](https://img.shields.io/badge/MCP-GitHub%20Copilot%20Integration-purple?style=for-the-badge)](https://github.com/features/copilot)
 
 ---
+
+> **🗳️ Love this project? [Vote for DesignGuardian AI on Discord!](https://aka.ms/agentsleague/discord)**
+>
+> Community votes account for **10%** of the final judging score. Your vote directly impacts our ranking!
+
+---
+
+</div>
 
 ## 📖 Executive Summary & Problem Statement
 
@@ -264,17 +275,19 @@ The server will boot on `http://localhost:3000`. You can check server health at 
 
 ## 🎮 3-Minute Demo Walkthrough
 
-Follow this script to experience the core features of DesignGuardian AI inside the **[Extension Development Host]** window:
+Follow this script to experience the full power of DesignGuardian AI inside the **[Extension Development Host]** window:
 
-1.  **Open Target Code**: Open `demo/Button.tsx` (violates spacing, border-radius, and palette guides).
-2.  **Audit the Component**: Open the Command Palette (`Ctrl+Shift+P` on Windows / `Cmd+Shift+P` on macOS) and run `DesignGuardian: Audit Component`.
-3.  **Inspect Dashboard**: 
-    *   **Compliance Boost Card**: Displays the immediate compliance delta: `68/100 -> 98/100 (+30 Boost)`.
-    *   **Review Timeline Stepper**: Breaks down every violation (unapproved gradients, `rounded-3xl` corner shapes, custom `shadow-2xl` depth) as a step-by-step visual chain mapping the retrieved rules, AI reasoning, and expected UX impact.
-4.  **Check Design DNA**: Switch to the **Design DNA Report** tab to review the style classification (*Developer Tool*), visual characteristics, and visual strategy narrative.
-5.  **Refactor Component**: Switch to the **Code Fix Diff** tab to inspect the side-by-side colorized code diff.
-6.  **Apply Auto-Fix**: Click **Apply to Editor** at the top right of the dashboard. The code in `demo/Button.tsx` updates instantly, and the Design Score updates to **100/100**.
-7.  **Consult Design Coach**: Go to the **Design Coach** tab and click **Ask DesignGuardian Why** to read the Gemini-driven visual hierarchy analysis.
+| Step | Action | What Happens |
+| :---: | :--- | :--- |
+| **1** | Open `demo/Card.tsx` | A deliberately over-styled ProductCard component with 15+ design violations across all six rule categories |
+| **2** | Run `DesignGuardian: Audit Component` via Command Palette (`Ctrl+Shift+P`) | DesignGuardian's rule engine + Foundry IQ + Gemini analyze the code in seconds |
+| **3** | **Inspect the Dashboard** | **Score: ~35/100** — Comic Sans font, hardcoded OrangeRed borders, Instagram-gradient buttons, non-modular spacing (13px, 9px, 11px), missing `alt` attributes, aggressive neon box-shadows |
+| **4** | Switch to **Design DNA Report** tab | See the style fingerprint: *Consumer Tech / Decorative / High-Contrast Neon* — the exact traits of generic AI-generated UI |
+| **5** | Switch to **Code Fix Diff** tab | A colorized side-by-side diff shows every line DesignGuardian will rewrite — replacing Comic Sans with Inter, replacing hardcoded colors with design tokens, normalizing spacing to the 4px modular scale |
+| **6** | Click **Apply to Editor** | The code in `demo/Card.tsx` updates instantly. **Score jumps to 96/100.** The compliance boost badge turns green |
+| **7** | Click **🧠 Ask DesignGuardian Why** | Gemini explains *why* each change matters from a product design perspective — typography hierarchy, color contrast ratios, and brand consistency |
+
+> **💡 Pro Tip**: After the auto-fix, run the audit again to show judges the near-perfect compliance score with zero remaining critical violations.
 
 ---
 
@@ -349,3 +362,22 @@ graph TD
 *   **Exclusion Lists**: The `.env` file is excluded from Git version control via the root `.gitignore` file, protecting private API credentials.
 *   **Zero Hardcoding**: All API credentials and endpoints are resolved dynamically at runtime using server environment variables.
 *   **Boundary Sanitation**: Code replacements are validated for safety before writing back to active editors.
+
+---
+
+## 📜 License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+**🛡️ DesignGuardian AI** — *Because great software deserves great design.*
+
+**[🗳️ Vote for us on Discord!](https://aka.ms/agentsleague/discord)**
+
+*Built with ❤️ using Microsoft Foundry IQ, GitHub Copilot, and Google Gemini*
+
+</div>
+
