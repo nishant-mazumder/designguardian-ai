@@ -397,11 +397,12 @@ export class DesignGuardianPanel {
 
     private async handleManualFileSelection() {
         console.log(`[Extension] handleManualFileSelection invoked. Showing file dialog...`);
+        vscode.window.showInformationMessage('Opening file dialog. Please select your component file...');
         try {
             const fileUris = await vscode.window.showOpenDialog({
                 canSelectMany: false,
                 openLabel: 'Select Component File',
-                filters: { 'TypeScript/JavaScript React': ['tsx', 'jsx', 'ts', 'js'] }
+                filters: { 'Components': ['tsx', 'ts', 'jsx', 'js'] }
             });
             console.log(`[Extension] File dialog returned URIs:`, fileUris);
             if (fileUris && fileUris.length > 0) {
@@ -927,6 +928,14 @@ export class DesignGuardianPanel {
     <!-- JS Logic -->
     <script>
         const vscode = acquireVsCodeApi();
+
+        // Global error logging to Extension Host
+        window.onerror = function(message, source, lineno, colno, error) {
+            vscode.postMessage({
+                command: 'showErrorMessage',
+                text: 'Webview JS Error: ' + message + ' at line ' + lineno
+            });
+        };
         
         let currentTab = 'dashboard';
         let latestAuditData = null;
