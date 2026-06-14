@@ -22,6 +22,7 @@ export class DesignGuardianPanel {
     // State cached for execution contexts
     private _currentCode: string = '';
     private _currentFileName: string = '';
+    private _lastActiveEditor: vscode.TextEditor | undefined;
 
     public static createOrShow(extensionUri: vscode.Uri) {
         const column = vscode.window.activeTextEditor
@@ -51,6 +52,14 @@ export class DesignGuardianPanel {
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
         this._panel = panel;
         this._extensionUri = extensionUri;
+        this._lastActiveEditor = vscode.window.activeTextEditor;
+
+        // Track active editor changes
+        vscode.window.onDidChangeActiveTextEditor(editor => {
+            if (editor && editor.document.uri.scheme === 'file') {
+                this._lastActiveEditor = editor;
+            }
+        }, null, this._disposables);
 
         // Set the webview's initial html content
         this._panel.webview.html = this._getHtmlForWebview(this._panel.webview);
@@ -64,7 +73,7 @@ export class DesignGuardianPanel {
             async (message) => {
                 switch (message.command) {
                     case 'webviewReady':
-                        if (this._currentCode && this._currentFileName) {
+                        if (this.ensureActiveContext()) {
                             await this.triggerAudit(this._currentCode, this._currentFileName);
                         }
                         break;
@@ -330,9 +339,20 @@ export class DesignGuardianPanel {
         }
     }
 
+    private ensureActiveContext(): boolean {
+        if (!this._currentCode || !this._currentFileName) {
+            const editor = vscode.window.activeTextEditor || this._lastActiveEditor;
+            if (editor) {
+                this._currentCode = editor.document.getText();
+                this._currentFileName = editor.document.fileName;
+            }
+        }
+        return !!(this._currentCode && this._currentFileName);
+    }
+
     // Actions received from webview UI interaction
     private async runAudit() {
-        if (!this._currentCode || !this._currentFileName) {
+        if (!this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to audit.');
             return;
         }
@@ -340,7 +360,7 @@ export class DesignGuardianPanel {
     }
 
     private async runFix(violations?: string[]) {
-        if (!this._currentCode || !this._currentFileName) {
+        if (!this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to fix.');
             return;
         }
@@ -367,7 +387,7 @@ export class DesignGuardianPanel {
     }
 
     private async runDNA() {
-        if (!this._currentCode || !this._currentFileName) {
+        if (!this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to analyze.');
             return;
         }
@@ -375,7 +395,7 @@ export class DesignGuardianPanel {
     }
 
     private async runDrift() {
-        if (!this._currentCode || !this._currentFileName) {
+        if (!this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to analyze.');
             return;
         }
@@ -409,7 +429,7 @@ export class DesignGuardianPanel {
     }
 
     private async runCoach() {
-        if (!this._currentCode || !this._currentFileName) {
+        if (!this.ensureActiveContext()) {
             vscode.window.showErrorMessage('No active file context to consult.');
             return;
         }
