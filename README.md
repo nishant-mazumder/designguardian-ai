@@ -262,7 +262,7 @@ The server will boot on `http://localhost:3000`. You can check server health at 
 
 ---
 
-## 🎮 3-Minute Judging Demo Walkthrough
+## 🎮 3-Minute Demo Walkthrough
 
 Follow this script to experience the core features of DesignGuardian AI inside the **[Extension Development Host]** window:
 
