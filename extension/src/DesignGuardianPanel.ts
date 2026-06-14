@@ -62,15 +62,8 @@ export class DesignGuardianPanel {
             }
         }, null, this._disposables);
 
-        // Set the webview's initial html content
-        this._panel.webview.html = this._getHtmlForWebview(this._panel.webview);
-
-        // Listen for when the panel is disposed
-        // This happens when the user closes the panel or when the panel is closed programmatically
-        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
-
         // Handle messages from the webview
-        this._panel.webview.onDidReceiveMessage(
+        const messageDisposable = this._panel.webview.onDidReceiveMessage(
             async (message) => {
                 switch (message.command) {
                     case 'webviewReady':
@@ -115,10 +108,15 @@ export class DesignGuardianPanel {
                         await this.handleManualFileSelection();
                         break;
                 }
-            },
-            null,
-            this._disposables
+            }
         );
+        this._disposables.push(messageDisposable);
+
+        // Set the webview's initial html content after listener is ready
+        this._panel.webview.html = this._getHtmlForWebview(this._panel.webview);
+
+        // Listen for when the panel is disposed
+        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
     }
 
     public dispose() {
