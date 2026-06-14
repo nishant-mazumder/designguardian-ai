@@ -1,0 +1,61 @@
+{
+  "name": "design-guardian-extension",
+  "displayName": "DesignGuardian AI",
+  "description": "AI-powered design compliance, score, drift detection, and auto-fixing extension.",
+  "version": "0.1.0",
+  "publisher": "designguardian",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.audit",
+        "title": "DesignGuardian: Audit Component"
+      },
+      {
+        "command": "extension.autoFix",
+        "title": "DesignGuardian: Auto Fix Component"
+      },
+      {
+        "command": "extension.showScore",
+        "title": "DesignGuardian: Show Design Score"
+      },
+      {
+        "command": "extension.generateDNA",
+        "title": "DesignGuardian: Generate Design DNA"
+      },
+      {
+        "command": "extension.detectDrift",
+        "title": "DesignGuardian: Detect Design Drift"
+      }
+    ],
+    "configuration": {
+      "title": "DesignGuardian",
+      "properties": {
+        "designguardian.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "API URL for DesignGuardian Server"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "build": "tsc -p ./"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "@types/node": "^16.11.7",
+    "typescript": "^5.3.3"
+  }
+}
