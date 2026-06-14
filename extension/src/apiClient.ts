@@ -61,7 +61,7 @@ export interface DriftResponse {
 
 function getApiUrl(): string {
     const config = vscode.workspace.getConfiguration('designguardian');
-    return config.get<string>('apiUrl') || 'http://localhost:3000';
+    return config.get<string>('apiUrl') || 'http://127.0.0.1:3000';
 }
 
 function postRequest<T>(path: string, data: any): Promise<T> {
