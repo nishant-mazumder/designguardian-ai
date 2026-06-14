@@ -12,7 +12,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "ignoreDeprecations": "5.0"
   },
   "exclude": [
     "node_modules",
