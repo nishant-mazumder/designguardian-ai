@@ -23,6 +23,7 @@ export class DesignGuardianPanel {
     private _currentCode: string = '';
     private _currentFileName: string = '';
     private _lastActiveEditor: vscode.TextEditor | undefined;
+    private _isWebviewReady = false;
 
     public static createOrShow(extensionUri: vscode.Uri) {
         const column = vscode.window.activeTextEditor
@@ -74,6 +75,7 @@ export class DesignGuardianPanel {
                 switch (message.command) {
                     case 'webviewReady':
                         console.log(`[Extension] Received webviewReady message from webview`);
+                        this._isWebviewReady = true;
                         if (await this.ensureActiveContext()) {
                             console.log(`[Extension] Active context verified, triggering audit...`);
                             await this.triggerAudit(this._currentCode, this._currentFileName);
@@ -219,6 +221,11 @@ export class DesignGuardianPanel {
         this._currentCode = code;
         this._currentFileName = fileName;
         
+        if (!this._isWebviewReady) {
+            console.log(`[Extension] Webview is not ready yet. Caching context and waiting for webviewReady...`);
+            return;
+        }
+        
         console.log(`[Extension] Posting setLoading command to webview...`);
         this._panel.webview.postMessage({ 
             command: 'setLoading', 
@@ -354,8 +361,12 @@ export class DesignGuardianPanel {
     }
 
     private async ensureActiveContext(): Promise<boolean> {
-        if (!this._currentCode || !this._currentFileName) {
-            const editor = vscode.window.activeTextEditor || this._lastActiveEditor;
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor && activeEditor.document.uri.scheme === 'file') {
+            this._currentCode = activeEditor.document.getText();
+            this._currentFileName = activeEditor.document.fileName;
+        } else if (!this._currentCode || !this._currentFileName) {
+            const editor = this._lastActiveEditor;
             if (editor) {
                 this._currentCode = editor.document.getText();
                 this._currentFileName = editor.document.fileName;
@@ -1182,7 +1193,7 @@ export class DesignGuardianPanel {
                 '<div class="flex items-center justify-between border-b border-zinc-800/80 pb-2 mb-3.5">' +
                     '<div class="flex items-center space-x-2">' +
                         '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ' + badgeClass + '">' + v.severity + '</span>' +
-                        '<span class="text-xs font-extrabold text-zinc-300 font-mono">' + v.category.toUpperCase() + '</span>' +
+                        '<span class="text-xs font-extrabold text-zinc-300 font-mono">' + (v.category || 'other').toUpperCase() + '</span>' +
                     '</div>' +
                     '<span class="text-[11px] text-zinc-500 font-mono">Line ' + (v.line || '--') + '</span>' +
                 '</div>' +
