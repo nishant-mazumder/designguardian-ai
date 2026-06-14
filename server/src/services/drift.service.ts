@@ -37,13 +37,17 @@ export class DriftService {
 
     // A. Check Palette Colors
     dnaReport.palette.forEach(item => {
+      if (!item.color) return;
       const colorVal = item.color.toLowerCase();
       // Skip CSS variables because they are design tokens
       if (colorVal.startsWith('var(') || colorVal === 'transparent' || colorVal === 'inherit') {
         return;
       }
       
-      const isAllowed = allowedColors.some(c => c.toLowerCase() === colorVal);
+      const isAllowed = allowedColors.some(c => {
+        if (!c) return false;
+        return c.toLowerCase() === colorVal;
+      });
       if (!isAllowed) {
         unregisteredColors.push(item.color);
         totalDriftPenalty += item.count * 6; // 6 points per occurrence of out-of-spec color
@@ -60,6 +64,7 @@ export class DriftService {
     // B. Check Spacing Scale
     dnaReport.spacing.forEach(item => {
       const valStr = item.value;
+      if (!valStr) return;
       // Extract numeric value from string (e.g. "13px" -> 13)
       const numMatch = /(\d+)(?:px)?/.exec(valStr);
       if (numMatch) {
@@ -80,11 +85,15 @@ export class DriftService {
 
     // C. Check Typography
     dnaReport.typography.forEach(item => {
-      const isFamilyAllowed = allowedFontFamilies.some(f => f.toLowerCase() === item.fontFamily.toLowerCase());
+      const isFamilyAllowed = allowedFontFamilies.some(f => {
+        if (!f || !item.fontFamily) return false;
+        return f.toLowerCase() === item.fontFamily.toLowerCase();
+      });
       const isSizeAllowed = allowedFontSizes.includes(item.size);
 
       if (!isFamilyAllowed || !isSizeAllowed) {
-        const label = `${item.fontFamily} ${item.size} (${item.weight})`;
+        const familyName = item.fontFamily || 'Unknown Font';
+        const label = `${familyName} ${item.size || ''} (${item.weight || ''})`;
         unregisteredTypography.push(label);
         totalDriftPenalty += item.count * 4;
 
